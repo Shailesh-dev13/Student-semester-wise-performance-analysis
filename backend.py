@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 sd = pd.read_csv('studentdata.csv')
 print("Dataset loaded successfully")
 print(sd)
+sd[['Sem1', 'Sem2', 'Sem3']] = sd[['Sem1', 'Sem2', 'Sem3']].apply(pd.to_numeric)
+sd=sd.dropna(subset=['Sem1', 'Sem2', 'Sem3'])
 total_students = len(sd)
 print(f"\nTotal number of students: {total_students}")
 semester_data = sd[['Sem1', 'Sem2', 'Sem3']]
