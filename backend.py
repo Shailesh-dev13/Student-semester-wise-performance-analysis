@@ -1,0 +1,53 @@
+#This is the backend code for analyzing student performance data across three semesters.
+import os
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+sd = pd.read_csv('studentdata.csv')
+print("Dataset loaded successfully")
+print(sd)
+total_students = len(sd)
+print(f"\nTotal number of students: {total_students}")
+semester_data = sd[['Sem1', 'Sem2', 'Sem3']]
+print(semester_data)
+semester_mean = semester_data.mean()
+highest_score = semester_data.max().max()
+lowest_score = semester_data.min().min()
+print("\nsemester-wise average score:")
+print(semester_mean)
+print(f"\nHighest score: {highest_score}")
+print(f"Lowest score: {lowest_score}")
+best_semester = semester_mean.idxmax()
+weakest_semester = semester_mean.idxmin()
+print(f"\nBest performing semester: {best_semester}")
+print(f"Weakest performing semester: {weakest_semester}")
+sd['Average marks'] = semester_data.mean(axis=1)
+sd['Total_marks'] = semester_data.sum(axis=1)
+print("\n Student wise performance")
+print(sd[['Student_ID', 'Sem1', 'Sem2', 'Sem3', 'Average marks', 'Total_marks']].head())
+sd['Growth_Percentage'] = ((sd['Sem3'] - sd['Sem1']) / sd['Sem1']) * 100
+print("\n Student Growth Percentage from Sem1 to Sem3")
+print(sd[['Student_ID', 'Growth_Percentage']].head())
+plt.figure()
+plt.plot(semester_mean.index, semester_mean.values, marker='o')
+plt.title('Semester-wise performance')
+plt.xlabel('Semester')
+plt.ylabel('Average Score')
+plt.grid(True)
+plt.show()
+plt.close()
+plt.figure(figsize=(8, 6))
+plt.hist(sd['Sem1'], bins=10, alpha=0.5, label='Sem1')
+plt.hist(sd['Sem2'], bins=10, alpha=0.5, label='Sem2')
+plt.hist(sd['Sem3'], bins=10, alpha=0.5, label='Sem3')
+plt.xlabel('Scores')
+plt.ylabel('Number of Students')
+plt.title('Score Distribution Across Semesters')
+plt.legend()
+plt.grid(True)
+plt.show()
+os.makedirs('output', exist_ok=True)
+report_sd = sd[['Student_ID', 'Sem1', 'Sem2', 'Sem3', 'Average marks', 'Total_marks', 'Growth_Percentage']] 
+report_path = 'output/student_performance_report.csv'
+report_sd.to_csv(report_path, index=False)
+print(f"\nreport Generated Sucessfully:{report_path}")
